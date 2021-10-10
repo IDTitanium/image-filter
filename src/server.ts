@@ -35,8 +35,17 @@ import {filterImageFromURL, deleteLocalFiles} from './util/util';
   // Displays a simple message to the user
   app.get( "/", async ( req, res ) => {
     res.send("try GET /filteredimage?image_url={{}}")
-  } );
-  
+  });
+
+  app.get( "/filteredimage", async ( req, res ) => {
+    const imageUrl = req.query.image_url
+    if(!checkURL(imageUrl)) {
+      return res.status(400).send({ message: 'Image URL is required or malformed' });
+    }
+    const filteredImgPath = await filterImageFromURL(imageUrl)
+    res.status(200).sendFile(filteredImgPath)
+    res.on('finish', () => deleteLocalFiles([filteredImgPath]));
+  });
 
   // Start the Server
   app.listen( port, () => {
@@ -44,3 +53,8 @@ import {filterImageFromURL, deleteLocalFiles} from './util/util';
       console.log( `press CTRL+C to stop server` );
   } );
 })();
+
+function checkURL(url : string) {
+  if (typeof url !== 'string') return false;
+  return (url != null);
+}
