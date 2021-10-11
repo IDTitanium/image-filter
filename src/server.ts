@@ -37,7 +37,7 @@ import {filterImageFromURL, deleteLocalFiles} from './util/util';
     res.send("try GET /filteredimage?image_url={{}}")
   });
 
-  app.get( "/filteredimage", async ( req, res ) => {
+  app.get( "/filteredimage", async ( req : express.Request, res : express.Response ) => {
     const imageUrl = req.query.image_url
     if(!checkURL(imageUrl)) {
       return res.status(400).send({ message: 'Image URL is required or malformed' });
